@@ -1,4 +1,4 @@
-name: CI - Maven, SonarQube, Nexus
+name: CI-CD
 
 on:
   workflow_dispatch:
@@ -34,7 +34,7 @@ jobs:
         distribution: 'temurin'
 
     - name: Set up Maven 3.9.9
-      uses: s4u/setup-maven-action@v1
+      uses: s4u/setup-maven-action@v3
       with:
         maven-version: '3.9.9'
 
