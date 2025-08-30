@@ -3,9 +3,24 @@ pipeline {
     stages {
         stage('Cloning Repo') {
             steps {
-                echo 'Cloning repository..'
-                sh 'git clone https://github.com/hkhcoder/vprofile-project.git'
-                sh 'cd vprofile-project'
+                echo 'Checking repository status...'
+                script {
+                    if (!fileExists('vprofile-project/.git')) {
+                        echo 'No local repo found. Cloning...'
+                        sh 'git clone https://github.com/hkhcoder/vprofile-project.git'
+                    } else {
+                        dir('vprofile-project') {
+                            sh 'git fetch origin'
+                            def changes = sh(script: "git status -uno | grep 'Your branch is behind'", returnStatus: true)
+                            if (changes == 0) {
+                                echo 'Local repo is behind. Pulling latest changes...'
+                                sh 'git pull origin main'
+                            } else {
+                                echo 'Local repo is up-to-date. Using existing copy.'
+                            }
+                        }
+                    }
+                }
             }
         }
         stage('Build') {
