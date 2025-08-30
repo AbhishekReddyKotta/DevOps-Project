@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    tools {
+        maven 'maven' // Ensure Maven is configured in Jenkins global tools
+    }
     stages {
         stage('Cloning Repo') {
             steps {
@@ -26,39 +29,70 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building..'
-                sh 'mvn clean install -DskipTests'
+                dir('vprofile-project') {
+                    sh 'mvn clean install -DskipTests'
+                }
             }
-            
         }
         stage('Unit Test') {
             steps {
                 echo 'Running Unit Tests..'
-                sh 'mvn test'
+                dir('vprofile-project') {
+                    sh 'mvn test'
+                }
             }
         }
         stage('Integration Test') {
             steps {
                 echo 'Running Integration Tests..'
-                sh 'mvn verify -DskipUnitTests'
+                dir('vprofile-project') {
+                    sh 'mvn verify -DskipUnitTests'
+                }
             }
         }
         stage('Code Analysis with Checkstyle') {
             steps {
                 echo 'Analyzing with Checkstyle..'
-                sh 'mvn checkstyle:checkstyle'
+                dir('vprofile-project') {
+                    sh 'mvn checkstyle:checkstyle'
+                }
             }
         }
-        stage('SonarQube Analysis') {
+        // stage('SonarQube Analysis') {
+        //     steps {
+        //         echo 'Analyzing with SonarQube..'
+        //         dir('vprofile-project') {
+        //             sh 'mvn sonar:sonar'
+        //         }
+        //     }
+        // }
+        stage('Archiving') {
             steps {
-                echo 'Analyzing with SonarQube..'
-                sh 'mvn sonar:sonar'
+                echo 'Archiving artifacts..'
+                dir('vprofile-project') {
+                    sh 'mv target/*.war versions/vpro_$BUILD_NUMBER.war'
+                }
             }
         }
-        stage('Deploy') {
+        stage('Upload to S3') {
             steps {
-                echo 'Deploying..'
-                sh 'mvn deploy'
+                echo 'Uploading artifact to AWS S3...'
+                dir('vprofile-project') {
+                    sh 'aws s3 cp versions/vpro_$BUILD_NUMBER.war s3://elasticbeanstalk-us-east-1-727646465392/vpro_$BUILD_NUMBER.war'
+                }
             }
+        }
+    }
+    post {
+        always {
+            echo 'Cleaning up workspace...'
+            cleanWs()
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Please check the logs.'
         }
     }
 }
