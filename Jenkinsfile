@@ -6,7 +6,6 @@ pipeline {
                 echo 'Cloning repository..'
                 sh 'git clone https://github.com/hkhcoder/vprofile-project.git'
                 sh 'cd vprofile-project'
-                sh 'git checkout awsrefactor'
             }
         }
         stage('Build') {
