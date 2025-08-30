@@ -28,7 +28,7 @@ pipeline {
                 sh 'mvn verify -DskipUnitTests'
             }
         }
-        stage(Code Analysis with Checkstyle) {
+        stage('Code Analysis with Checkstyle') {
             steps {
                 echo 'Analyzing with Checkstyle..'
                 sh 'mvn checkstyle:checkstyle'
