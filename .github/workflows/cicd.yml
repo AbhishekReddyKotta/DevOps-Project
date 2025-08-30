@@ -1,4 +1,4 @@
-name: CI-CD
+name: CI - Maven, SonarQube, Nexus
 
 on:
   workflow_dispatch:
@@ -12,9 +12,9 @@ on:
           - '19'
           - '21'
   push:
-    branches: [ main, master ]
+    branches: [ workflows ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ workflows ]
 
 jobs:
   build-test-sonar-nexus:
