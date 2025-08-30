@@ -83,16 +83,18 @@ pipeline {
             }
         }
     }
-    post {
-        always {
-            echo 'Cleaning up workspace...'
-            cleanWs()
-        }
-        success {
-            echo 'Pipeline completed successfully!'
-        }
-        failure {
-            echo 'Pipeline failed. Please check the logs.'
-        }
-    }
+    // post {
+    //     always {
+    //         echo 'Cleaning up workspace...'
+    //         dir('vprofile-project@tmp') {
+    //             cleanWs()
+    //         }
+    //     }
+    //     success {
+    //         echo 'Pipeline completed successfully!'
+    //     }
+    //     failure {
+    //         echo 'Pipeline failed. Please check the logs.'
+    //     }
+    // }
 }
