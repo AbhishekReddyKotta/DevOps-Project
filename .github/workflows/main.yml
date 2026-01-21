@@ -1,0 +1,31 @@
+name: Service Management
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform (start, stop, status)'
+        required: true
+        type: choice
+        options:
+          - start
+          - stop
+          - status
+      env:
+        description: 'Environment(s) (e.g., Dev, Dev,Test, or allenv)'
+        required: true
+        type: string
+
+jobs:
+  manage-services:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run PowerShell script
+        run: .\Automation\restart.ps1 -action ${{ inputs.action }} -env ${{ inputs.env }}
+        shell: pwsh
+        env:
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
