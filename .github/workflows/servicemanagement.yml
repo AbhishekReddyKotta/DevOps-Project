@@ -12,9 +12,14 @@ on:
           - stop
           - status
       env:
-        description: 'Environment(s) (e.g., Dev, Dev,Test, or allenv)'
+        description: 'Environment(s) to target'
         required: true
-        type: string
+        type: choice
+        options:
+          - Dev
+          - Test
+          - Prod
+          - allenv
 
 jobs:
   manage-services:
